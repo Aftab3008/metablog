@@ -208,3 +208,82 @@ export async function getSiteData(siteId: string) {
     throw new Error("Error getting site data");
   }
 }
+
+export async function getData(userId: string) {
+  try {
+    const [sites, articles] = await Promise.all([
+      prisma.site.findMany({
+        where: {
+          userId: userId,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: 3,
+      }),
+      prisma.post.findMany({
+        where: {
+          userId: userId,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: 3,
+      }),
+    ]);
+    return { sites, articles };
+  } catch (error) {
+    throw new Error("Error getting data");
+  }
+}
+
+export async function getSiteSubData(subDir: string) {
+  try {
+    const data = await prisma.site.findUnique({
+      where: {
+        subdirectory: subDir,
+      },
+      select: {
+        name: true,
+        posts: {
+          select: {
+            smallDescription: true,
+            title: true,
+            image: true,
+            createdAt: true,
+            slug: true,
+            id: true,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
+      },
+    });
+
+    return data;
+  } catch (error) {
+    throw new Error("Error getting site data");
+  }
+}
+
+export async function getPostData(slug: string) {
+  try {
+    const data = await prisma.post.findUnique({
+      where: {
+        slug: slug,
+      },
+      select: {
+        articleContent: true,
+        title: true,
+        smallDescription: true,
+        image: true,
+        createdAt: true,
+      },
+    });
+
+    return data;
+  } catch (error) {
+    throw new Error("Error getting post data");
+  }
+}

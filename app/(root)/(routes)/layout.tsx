@@ -1,4 +1,5 @@
 import { DashboardItems } from "@/components/shared/dashboard/DashboardItems";
+import MobileSheet from "@/components/shared/MobileSheet";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import {
@@ -46,6 +47,12 @@ export default async function layout({
 
       <div className="flex flex-col">
         <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+          <div className="md:hidden flex gap-4">
+            <Link href="/" className="flex items-center gap-2 font-semibold">
+              <Image src={Logo} alt="Logo" className="size-10" />
+            </Link>
+            <MobileSheet />
+          </div>
           <div className="ml-auto flex items-center gap-x-5">
             <ThemeToggle />
             <DropdownMenu>

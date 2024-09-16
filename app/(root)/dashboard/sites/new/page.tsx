@@ -27,7 +27,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
+import { set, z } from "zod";
 import { useRouter } from "next/navigation";
 
 export default function NewSiteRoute() {
@@ -40,6 +40,8 @@ export default function NewSiteRoute() {
       subdirectory: "",
     },
   });
+
+  const { setError } = form;
 
   async function onSubmit(values: z.infer<typeof siteSchema>) {
     try {
@@ -56,7 +58,13 @@ export default function NewSiteRoute() {
       }
     } catch (error) {
       if (error instanceof Error) {
-        toast.error(error.message);
+        if (error.message === "Subdirectory already exists") {
+          setError("subdirectory", {
+            message: "Subdirectory already taken...",
+          });
+        } else {
+          toast.error(error.message);
+        }
       } else {
         toast.error("An unknown error occurred");
       }

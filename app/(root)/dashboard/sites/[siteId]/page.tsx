@@ -1,4 +1,6 @@
+import DeleteItem from "@/components/shared/DeleteItem";
 import { EmptyState } from "@/components/shared/EmptyState";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,10 +30,11 @@ import prisma from "@/lib/db";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import {
   Book,
-  FileIcon,
+  Edit,
   MoreHorizontal,
   PlusCircle,
   Settings,
+  TrashIcon,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -169,15 +172,19 @@ export default async function SiteIdRoute({
                               <Link
                                 href={`/dashboard/sites/${params.siteId}/${item.id}`}
                               >
+                                <Edit className="size-4 mr-2" />
                                 Edit
                               </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                              <Link
-                                href={`/dashboard/sites/${params.siteId}/${item.id}/delete`}
-                              >
-                                Delete
-                              </Link>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              asChild
+                              className="hover:bg-slate-500"
+                            >
+                              <DeleteItem
+                                title={item.title}
+                                articleId={item.id}
+                              />
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>

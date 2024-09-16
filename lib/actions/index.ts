@@ -287,3 +287,25 @@ export async function getPostData(slug: string) {
     throw new Error("Error getting post data");
   }
 }
+
+export async function getUserSubscriptions(userId: string) {
+  try {
+    const data = await prisma.subscription.findUnique({
+      where: {
+        userId: userId,
+      },
+      select: {
+        status: true,
+        User: {
+          select: {
+            customerId: true,
+          },
+        },
+      },
+    });
+
+    return data;
+  } catch (error) {
+    throw new Error("Error getting user subscriptions");
+  }
+}

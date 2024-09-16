@@ -1,10 +1,16 @@
+import { Features } from "@/components/shared/landingpage/Features";
+import { Hero } from "@/components/shared/landingpage/hero";
+import { Logos } from "@/components/shared/landingpage/Logos";
+import { PricingTable } from "@/components/shared/Pricing";
 import { LoginLink } from "@kinde-oss/kinde-auth-nextjs/components";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      Hello
-      <LoginLink>Sign in</LoginLink>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-24">
+      <Hero />
+      <Logos />
+      <Features />
+      <PricingTable />
     </div>
   );
 }

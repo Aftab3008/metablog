@@ -3,31 +3,42 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
+  try {
+    const { getUser } = getKindeServerSession();
+    const user = await getUser();
 
-  if (!user || user === null || !user.id) {
-    throw new Error("Something went wrong");
-  }
+    if (!user || !user.id) {
+      return NextResponse.json(
+        { error: "User not found or session invalid" },
+        { status: 400 }
+      );
+    }
 
-  let dbUser = await prisma.user.findUnique({
-    where: {
-      id: user.id,
-    },
-  });
-
-  if (!dbUser) {
-    dbUser = await prisma.user.create({
-      data: {
+    let dbUser = await prisma.user.findUnique({
+      where: {
         id: user.id,
-        firstName: user.given_name ?? "",
-        lastName: user.family_name ?? "",
-        email: user.email ?? "",
-        profileImage:
-          user.picture ?? `https://avatar.vercel.sh/${user.given_name}`,
       },
     });
-  }
 
-  return NextResponse.redirect("http://localhost:3000/dashboard");
+    if (!dbUser) {
+      dbUser = await prisma.user.create({
+        data: {
+          id: user.id,
+          firstName: user.given_name ?? "",
+          lastName: user.family_name ?? "",
+          email: user.email ?? "",
+          profileImage:
+            user.picture ?? `https://avatar.vercel.sh/${user.given_name}`,
+        },
+      });
+    }
+
+    return NextResponse.redirect("http://localhost:3000/dashboard");
+  } catch (error) {
+    console.error("Error during user processing:", error);
+    return NextResponse.json(
+      { error: "An error occurred while processing the request" },
+      { status: 500 }
+    );
+  }
 }

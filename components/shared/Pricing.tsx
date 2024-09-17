@@ -11,6 +11,7 @@ import { PricingPlans } from "@/constants";
 import { Check } from "lucide-react";
 
 import Link from "next/link";
+import CreateSubscriptionButton from "./CreateSubscriptionButton";
 
 export function PricingTable() {
   return (
@@ -63,7 +64,7 @@ export function PricingTable() {
             </CardContent>
             <CardFooter>
               {item.id === 1 ? (
-                <Button className="w-full">Buy Plan</Button>
+                <CreateSubscriptionButton />
               ) : (
                 <Button variant="outline" className="mt-5 w-full" asChild>
                   <Link href="/dashboard">Try for free</Link>

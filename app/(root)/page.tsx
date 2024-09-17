@@ -2,7 +2,6 @@ import { Features } from "@/components/shared/landingpage/Features";
 import { Hero } from "@/components/shared/landingpage/hero";
 import { Logos } from "@/components/shared/landingpage/Logos";
 import { PricingTable } from "@/components/shared/Pricing";
-import { LoginLink } from "@kinde-oss/kinde-auth-nextjs/components";
 
 export default function Home() {
   return (

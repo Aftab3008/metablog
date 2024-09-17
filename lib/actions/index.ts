@@ -314,6 +314,7 @@ export async function getUserSubscriptions(userId: string) {
 export async function CreateSubscription() {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
+
   if (!user) {
     return redirect("/api/auth/login");
   }
@@ -357,11 +358,11 @@ export async function CreateSubscription() {
     },
     success_url:
       process.env.NODE_ENV === "production"
-        ? "https://blog-marshal.vercel.app/dashboard/payment/success"
+        ? "https://metablog-red.vercel.app/dashboard/payment/success"
         : "http://localhost:3000/dashboard/payment/success",
     cancel_url:
       process.env.NODE_ENV === "production"
-        ? "https://blog-marshal.vercel.app/dashboard/payment/cancelled"
+        ? "https://metablog-red.vercel.app/dashboard/payment/cancelled"
         : "http://localhost:3000/dashboard/payment/cancelled",
   });
 

@@ -81,12 +81,23 @@ export async function Hero() {
               for you to create a blog in minutes
             </p>
             <div className="flex items-center gap-x-5 w-full justify-center mt-5 ">
-              <LoginLink>
-                <Button variant="secondary">Sign in</Button>
-              </LoginLink>
-              <RegisterLink>
-                <Button>Try for free</Button>
-              </RegisterLink>
+              {session && session.id ? (
+                <Button asChild>
+                  <Link href="/dashboard">
+                    Dashboard
+                    <ArrowRight size={20} className="ml-1" />
+                  </Link>
+                </Button>
+              ) : (
+                <>
+                  <LoginLink>
+                    <Button variant="secondary">Sign in</Button>
+                  </LoginLink>
+                  <RegisterLink>
+                    <Button>Try for Free</Button>
+                  </RegisterLink>
+                </>
+              )}
             </div>
           </div>
 

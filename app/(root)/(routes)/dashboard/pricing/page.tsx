@@ -1,4 +1,5 @@
 import { PricingTable } from "@/components/shared/Pricing";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,7 +9,9 @@ import {
 } from "@/components/ui/card";
 import { getUserSubscriptions } from "@/lib/actions";
 import { requireUser } from "@/lib/actions/requireUser";
+import { stripe } from "@/utils/stripe";
 import { redirect } from "next/navigation";
+import { toast } from "sonner";
 
 export default async function PricingPage() {
   const user = await requireUser();
@@ -17,15 +20,25 @@ export default async function PricingPage() {
   async function createCustomerPortal() {
     "use server";
 
-    // const session = await stripe.billingPortal.sessions.create({
-    //   customer: data?.User?.customerId as string,
-    //   return_url:
-    //     process.env.NODE_ENV === "production"
-    //       ? "https://blog-marshal.vercel.app/dashboard"
-    //       : "http://localhost:3000/dashboard",
-    // });
+    try {
+      const session = await stripe.billingPortal.sessions.create({
+        customer: data?.User?.customerId as string,
+        return_url:
+          process.env.NODE_ENV === "production"
+            ? "https://metablog-red.vercel.app/dashboard"
+            : "http://localhost:3000/dashboard",
+      });
 
-    // return redirect(session.url);
+      if (!session) {
+        throw new Error("Failed to create customer portal session");
+      }
+      return redirect(session.url);
+    } catch (error) {
+      toast.error("Failed to create customer portal session.", {
+        description: "Please try again later.",
+      });
+      throw new Error("Failed to create customer portal session");
+    }
   }
 
   if (data?.status === "active") {
@@ -39,7 +52,11 @@ export default async function PricingPage() {
             time.
           </CardDescription>
         </CardHeader>
-        <CardContent></CardContent>
+        <CardContent>
+          <Button onClick={createCustomerPortal} disabled>
+            View Subscription Details
+          </Button>
+        </CardContent>
       </Card>
     );
   }

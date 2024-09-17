@@ -26,6 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { getSiteInfo } from "@/lib/actions";
 import prisma from "@/lib/db";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import {
@@ -38,32 +39,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-
-async function getData(userId: string, siteId: string) {
-  const data = await prisma.site.findUnique({
-    where: {
-      id: siteId,
-      userId: userId,
-    },
-    select: {
-      subdirectory: true,
-      posts: {
-        select: {
-          image: true,
-          title: true,
-          createdAt: true,
-          id: true,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      },
-    },
-  });
-
-  return data;
-}
+import { notFound, redirect } from "next/navigation";
 
 export default async function SiteIdRoute({
   params,
@@ -77,7 +53,11 @@ export default async function SiteIdRoute({
     return redirect("/api/auth/login");
   }
 
-  const data = await getData(user.id, params.siteId);
+  const data = await getSiteInfo(user.id, params.siteId);
+
+  if (!data) {
+    return notFound();
+  }
 
   return (
     <>

@@ -5,5 +5,5 @@ export default withAuth({
   isReturnToCurrentPage: true,
 });
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: ["/dashboard/:path*", "/blog/:path*"],
 };

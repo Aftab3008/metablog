@@ -15,26 +15,69 @@ export async function CreateSiteAction(formData: FormData) {
     if (!user) {
       return redirect("/api/auth/login");
     }
-    const submission = parseWithZod(formData, { schema: siteSchema });
+    const [subStatus, sites] = await Promise.all([
+      prisma.subscription.findUnique({
+        where: {
+          userId: user.id,
+        },
+        select: {
+          status: true,
+        },
+      }),
+      prisma.site.findMany({
+        where: {
+          userId: user.id,
+        },
+      }),
+    ]);
 
-    if (submission.status !== "success") {
-      return submission.reply();
+    if (!subStatus || subStatus.status !== "active") {
+      if (sites.length < 1) {
+        const submission = parseWithZod(formData, { schema: siteSchema });
+
+        if (submission.status !== "success") {
+          return submission.reply();
+        }
+
+        const response = await prisma.site.create({
+          data: {
+            description: submission.value.description,
+            name: submission.value.name,
+            subdirectory: submission.value.subdirectory.toLowerCase(),
+            userId: user.id,
+          },
+        });
+
+        if (!response) {
+          throw new Error("Failed to create site");
+        }
+
+        return JSON.stringify(response);
+      } else {
+        return redirect("/dashboard/pricing");
+      }
+    } else {
+      const submission = parseWithZod(formData, { schema: siteSchema });
+
+      if (submission.status !== "success") {
+        return submission.reply();
+      }
+
+      const response = await prisma.site.create({
+        data: {
+          description: submission.value.description,
+          name: submission.value.name,
+          subdirectory: submission.value.subdirectory.toLowerCase(),
+          userId: user.id,
+        },
+      });
+
+      if (!response) {
+        throw new Error("Failed to create site");
+      }
+
+      return JSON.stringify(response);
     }
-
-    const response = await prisma.site.create({
-      data: {
-        description: submission.value.description,
-        name: submission.value.name,
-        subdirectory: submission.value.subdirectory,
-        userId: user.id,
-      },
-    });
-
-    if (!response) {
-      throw new Error("Failed to create site");
-    }
-
-    return JSON.stringify(response);
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
@@ -367,4 +410,36 @@ export async function CreateSubscription() {
   });
 
   return redirect(session.url as string);
+}
+
+export async function getSiteInfo(userId: string, siteId: string) {
+  try {
+    const data = await prisma.site.findUnique({
+      where: {
+        id: siteId,
+        userId: userId,
+      },
+      select: {
+        subdirectory: true,
+        posts: {
+          select: {
+            image: true,
+            title: true,
+            createdAt: true,
+            id: true,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
+      },
+    });
+
+    if (!data) {
+      return null;
+    }
+    return data;
+  } catch (error) {
+    return null;
+  }
 }

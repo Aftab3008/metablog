@@ -26,7 +26,7 @@ export const PricingPlans: iAppProps[] = [
     cardTitle: "Freelancer",
     cardDescription: "The best pricing plan for people starting out.",
     benefits: [
-      "1 Site",
+      "20 Site",
       "Up to 1000 Visitors",
       "Up to 1000 Visitors",
       "Up to 1000 Visitors",
@@ -51,25 +51,25 @@ export const features = [
   {
     name: "Sign up for free",
     description:
-      "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna.",
+      "Join Metablog with no upfront costs and start sharing your thoughts with the world instantly.",
     icon: CloudRain,
   },
   {
-    name: "Balzing fast",
+    name: "Blazing fast",
     description:
-      "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna.",
+      "Enjoy a lightning-quick experience while creating and reading blog posts on Metablog, optimized for speed and efficiency.",
     icon: CloudRain,
   },
   {
     name: "Super secure with Kinde",
     description:
-      "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna.",
+      "Your data and content are protected with the highest security standards, powered by Kinde, ensuring privacy and peace of mind.",
     icon: CloudRain,
   },
   {
     name: "Easy to use",
     description:
-      "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna.",
+      "Metablog's intuitive interface makes it simple for anyone to start blogging, regardless of technical expertise.",
     icon: CloudRain,
   },
 ];

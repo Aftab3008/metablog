@@ -55,14 +55,17 @@ export default function NewSiteRoute() {
 
       if (response) {
         toast.success("Site created successfully");
-        router.push("/dashboard/sites"); // Perform client-side redirect
+        router.push("/dashboard/sites");
       }
     } catch (error) {
       if (error instanceof Error) {
+        console.log(error.message);
         if (error.message === "Subdirectory already exists") {
           setError("subdirectory", {
             message: "Subdirectory already taken...",
           });
+        } else if (error.message === "Subscription required") {
+          router.push("/dashboard/pricing");
         } else {
           toast.error(error.message);
         }

@@ -1,12 +1,12 @@
 "use server";
 
+import { stripe } from "@/utils/stripe";
 import { parseWithZod } from "@conform-to/zod";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { Prisma } from "@prisma/client";
 import { redirect } from "next/navigation";
 import prisma from "../db";
 import { PostSchema, siteSchema } from "../ZodSchema";
-import { stripe } from "@/utils/stripe";
 
 export async function CreateSiteAction(formData: FormData) {
   try {
@@ -15,6 +15,7 @@ export async function CreateSiteAction(formData: FormData) {
     if (!user) {
       return redirect("/api/auth/login");
     }
+
     const [subStatus, sites] = await Promise.all([
       prisma.subscription.findUnique({
         where: {
@@ -32,30 +33,30 @@ export async function CreateSiteAction(formData: FormData) {
     ]);
 
     if (!subStatus || subStatus.status !== "active") {
-      if (sites.length < 1) {
-        const submission = parseWithZod(formData, { schema: siteSchema });
-
-        if (submission.status !== "success") {
-          return submission.reply();
-        }
-
-        const response = await prisma.site.create({
-          data: {
-            description: submission.value.description,
-            name: submission.value.name,
-            subdirectory: submission.value.subdirectory.toLowerCase(),
-            userId: user.id,
-          },
-        });
-
-        if (!response) {
-          throw new Error("Failed to create site");
-        }
-
-        return JSON.stringify(response);
-      } else {
+      if (sites.length >= 20) {
         return redirect("/dashboard/pricing");
       }
+
+      const submission = parseWithZod(formData, { schema: siteSchema });
+
+      if (submission.status !== "success") {
+        return submission.reply();
+      }
+
+      const response = await prisma.site.create({
+        data: {
+          description: submission.value.description,
+          name: submission.value.name,
+          subdirectory: submission.value.subdirectory.toLowerCase(),
+          userId: user.id,
+        },
+      });
+
+      if (!response) {
+        throw new Error("Failed to create site");
+      }
+
+      return JSON.stringify(response);
     } else {
       const submission = parseWithZod(formData, { schema: siteSchema });
 
@@ -83,6 +84,13 @@ export async function CreateSiteAction(formData: FormData) {
       if (error.code === "P2002") {
         throw new Error("Subdirectory already exists");
       }
+    } else if (
+      error instanceof Error &&
+      error.message === "Subscription required"
+    ) {
+      throw new Error("Subscription required");
+    } else {
+      throw error;
     }
   }
 }
